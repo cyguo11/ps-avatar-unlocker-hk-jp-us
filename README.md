@@ -1,17 +1,19 @@
 # <img src="logo.svg" width="32" height="32" valign="middle"> PS Store Avatar Adder
 
+### Modified version of [yungtry/psn-avatar-unlocker](https://github.com/yungtry/psn-avatar-unlocker) with HK/JP/US store support.
+
 A Tampermonkey userscript to add classic PS3/PS4 avatars to your PlayStation Store cart, including legacy items that are no longer listed in the web store.
 
 <img src="screenshots/main.png" width="480" alt="PS Store Avatar Adder Panel">
 
 [![Get Tampermonkey](https://img.shields.io/badge/Tampermonkey-Get%20Extension-008080?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://www.tampermonkey.net/)
 [![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-Install%20Script-d9534f?style=for-the-badge)](https://greasyfork.org)
-[![Direct Install](https://img.shields.io/badge/Direct%20Install-Raw%20Script-0072ce?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/yungtry/ps3avatars/main/ps3-avatar-adder.user.js)
+[![Direct Install](https://img.shields.io/badge/Direct%20Install-Raw%20Script-0072ce?style=for-the-badge&logo=github&logoColor=white)](https://github.com/cyguo11/psn-avatar-unlocker/raw/refs/heads/main/ps3-avatar-adder-HK-JP-US.user.js)
 
 ## Installation
 
 1. Install the [Tampermonkey](https://www.tampermonkey.net/) extension for your web browser.
-2. Click [here](https://raw.githubusercontent.com/yungtry/ps3avatars/main/ps3-avatar-adder.user.js) to install the script.
+2. Click [here](https://github.com/cyguo11/psn-avatar-unlocker/raw/refs/heads/main/ps3-avatar-adder-HK-JP-US.user.js) to install the script.
 3. Visit the [PlayStation Store](https://store.playstation.com/) and make sure you are logged in.
 
 ## Tutorial
