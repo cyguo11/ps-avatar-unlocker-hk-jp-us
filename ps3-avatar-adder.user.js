@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         PS Store Avatar Adder
-// @namespace    https://github.com/yungtry/psn-avatar-unlocker
-// @version      6.5.0
+// @name         PS Store Avatar Adder (HK/JP/US)
+// @namespace    https://github.com/cyguo11/psn-avatar-unlocker/hk-jp-us
+// @version      6.5.0-hkjpus.5
 // @description  Adds PS3/PS4 avatars to the PlayStation Store cart. Paste the avatar ID and click the button.
-// @author       yungtry
+// @author       cyguo11
 // @match        https://store.playstation.com/*
 // @match        https://checkout.playstation.com/*
 // @grant        GM_xmlhttpRequest
@@ -115,12 +115,22 @@
     // UTILS
     // =========================================================================
     Object.assign(Utils, {
+        // Only these regions are offered; the language is derived from the country.
+        REGIONS: {
+            // SKU suffix letter differs per store: HK uses -H001, JP -J001, US -U001 (EU is -E001).
+            HK: { label: '🇭🇰 HK', language: 'en-hk', skuLetter: 'H' },
+            JP: { label: '🇯🇵 JP', language: 'ja-jp', skuLetter: 'J' },
+            US: { label: '🇺🇸 US', language: 'en-us', skuLetter: 'U' },
+        },
+
         detectLocale() {
+            let country = 'HK';
             try {
-                const m = window.location.pathname.match(/^\/([a-z]{2})-([a-z]{2})\//i);
-                if (m) return { country: m[2].toUpperCase(), language: `${m[1]}-${m[2]}` };
+                // Matches /en-hk/, /zh-hant-hk/, /ja-jp/, /en-us/ ...
+                const m = window.location.pathname.match(/^\/[a-z]{2}(?:-[a-z]{4})?-([a-z]{2})(?:\/|$)/i);
+                if (m && Utils.REGIONS[m[1].toUpperCase()]) country = m[1].toUpperCase();
             } catch (_) { }
-            return { country: 'PL', language: 'pl-pl' };
+            return { country, language: Utils.REGIONS[country].language };
         },
 
         uuid() {
@@ -535,6 +545,12 @@
                 }
                 @keyframes psa-spin { to { transform: rotate(360deg); } }
                 #psa-advanced { margin-top: 10px; }
+                #psa-help { margin: -4px 0 12px; }
+                #psa-help summary { font-size: 11.5px; color: #0072ce; cursor: pointer; user-select: none; }
+                #psa-help ol { margin: 6px 0 0; padding-left: 18px; font-size: 11.5px; line-height: 1.6; color: #444; }
+                #psa-help a { color: #0072ce; }
+                #psa-help code { background: #f2f2f2; padding: 0 3px; border-radius: 3px; }
+                .psa-help-note { margin-top: 6px; font-size: 11px; line-height: 1.5; color: #8f8f8f; }
                 #psa-advanced summary { font-size: 11.5px; color: #8f8f8f; cursor: pointer; user-select: none; }
                 #psa-advanced summary:hover { color: #1a1a1a; }
                 #psa-advanced[open] summary { margin-bottom: 10px; }
@@ -662,20 +678,26 @@
                             spellcheck="false" autocomplete="off" />
                     </div>
 
+                    <details id="psa-help">
+                        <summary>如何使用？</summary>
+                        <ol>
+                            <li>PS Store 使用英文界面：<a href="https://store.playstation.com/en-hk/" target="_blank" rel="noopener"><code>store.playstation.com/en-hk/</code></a>（日服 <code>ja-jp</code>，美服 <code>en-us</code>）</li>
+                            <li>首次使用：随便把一个商品加入购物车（不能是预购），面板显示 Hash 后再把它删掉。之后加车报 hash 失效时重做这一步</li>
+                            <li>打开 <a href="https://psprices.com/region-hk/collection/avatars" target="_blank" rel="noopener">PSPrices 港服头像目录</a>（日服、美服把网址里的 <code>region-hk</code> 换成 <code>region-jp</code> 或 <code>region-us</code>）</li>
+                            <li>点进头像详情页</li>
+                            <li>打开网页源代码：Mac 按 <code>⌘ + ⌥ + U</code>，Windows 按 <code>Ctrl + U</code></li>
+                            <li>搜索 <code>"sku"</code>：Mac 按 <code>⌘ + F</code>，Windows 按 <code>Ctrl + F</code>，复制引号里的 ID，粘贴到上面的输入框</li>
+                            <li>选择地区，点 <b>Add to Cart</b>，然后去官方购物车确认价格并结账</li>
+                        </ol>
+                        <div class="psa-help-note">备注：如果有其他获取头像 ID 的方式，直接把 ID 粘贴进输入框即可。注意地区要和 PSN 账号一致。</div>
+                    </details>
+
                     <div id="psa-country-group">
                         <select id="psa-country-select">
-                            <option value="PL" ${locale.country === 'PL' ? 'selected' : ''}>🇵🇱 PL</option>
-                            <option value="US" ${locale.country === 'US' ? 'selected' : ''}>🇺🇸 US</option>
-                            <option value="GB" ${locale.country === 'GB' ? 'selected' : ''}>🇬🇧 GB</option>
-                            <option value="DE" ${locale.country === 'DE' ? 'selected' : ''}>🇩🇪 DE</option>
-                            <option value="FR" ${locale.country === 'FR' ? 'selected' : ''}>🇫🇷 FR</option>
-                            <option value="ES" ${locale.country === 'ES' ? 'selected' : ''}>🇪🇸 ES</option>
-                            <option value="IT" ${locale.country === 'IT' ? 'selected' : ''}>🇮🇹 IT</option>
-                            <option value="NL" ${locale.country === 'NL' ? 'selected' : ''}>🇳🇱 NL</option>
-                            <option value="JP" ${locale.country === 'JP' ? 'selected' : ''}>🇯🇵 JP</option>
-                            <option value="AU" ${locale.country === 'AU' ? 'selected' : ''}>🇦🇺 AU</option>
+                            ${Object.entries(Utils.REGIONS).map(([cc, r]) =>
+                                `<option value="${cc}" ${locale.country === cc ? 'selected' : ''}>${r.label}</option>`).join('')}
                         </select>
-                        <input id="psa-lang-input" type="text" value="${esc(locale.language)}" placeholder="pl-pl" />
+                        <input id="psa-lang-input" type="text" value="${esc(locale.language)}" readonly title="Set automatically from the country" />
                     </div>
 
                     <button id="psa-add-btn">Add to Cart</button>
@@ -709,6 +731,9 @@
             document.getElementById('psa-close-btn').addEventListener('click', () => {
                 panel.classList.add('psa-hidden');
                 toggleBtn.classList.remove('psa-hidden');
+            });
+            document.getElementById('psa-country-select').addEventListener('change', (e) => {
+                document.getElementById('psa-lang-input').value = Utils.REGIONS[e.target.value].language;
             });
             document.getElementById('psa-add-btn').addEventListener('click', EventHandlers.handleAdd);
             document.getElementById('psa-avatar-input').addEventListener('keydown', (e) => {
@@ -793,7 +818,8 @@
             Utils.logMessage('info', `ID: ${avatarId}`);
             Utils.logMessage('info', `Region: ${country} / ${language}`);
 
-            const suffixes = ['-E001', '-E002', '-E003', ''];
+            const L = Utils.REGIONS[country].skuLetter;
+            const suffixes = [`-${L}001`, `-${L}002`, `-${L}003`, '-E001', ''];
 
             for (const sfx of suffixes) {
                 const sku = avatarId + sfx;
